@@ -10,7 +10,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Include the Supabase CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <style>
@@ -31,6 +30,12 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+        }
+
+        /* Continuous Smooth Scrolling Engine Setup */
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 100px; /* Accounts for fixed navigation header clearance */
         }
 
         body {
@@ -157,6 +162,9 @@
         body.admin-mode header {
             top: 45px;
         }
+        body.admin-mode html {
+            scroll-padding-top: 145px; /* Offset spacing when admin bar is structural */
+        }
 
         .logo {
             font-family: var(--font-serif);
@@ -204,9 +212,9 @@
             color: #fff;
         }
 
-        /* --- MULTI-PAGE VIEW MANAGEMENT --- */
+        /* --- SINGLE-PAGE SCROLL VIEW MANAGEMENT --- */
         .page {
-            display: none;
+            display: block; /* Modified from display: none to enable continuous scrolling flow */
             min-height: 100vh;
             padding: 140px 8% 80px 8%;
         }
@@ -214,14 +222,96 @@
             padding-top: 185px;
         }
 
-        .page.active-page {
-            display: block;
-            animation: fadeIn 0.6s ease-in-out;
+        /* --- ISOLATED ADMIN PORTAL MODAL OVERLAY --- */
+        #admin-login-modal {
+            display: none; /* Controlled dynamically via visibility state engines */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(8px);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            animation: modalFadeIn 0.3s ease-out forwards;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
+        @keyframes modalFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .login-card {
+            background: var(--card-bg);
+            width: 100%;
+            max-width: 450px;
+            margin: 20px;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 15px 45px rgba(0,0,0,0.25);
+            text-align: left;
+            position: relative;
+            animation: cardSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes cardSlideUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-close-trigger {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: transparent;
+            border: none;
+            font-size: 1.3rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .modal-close-trigger:hover {
+            color: var(--text-main);
+        }
+
+        .login-card h2 {
+            font-family: var(--font-serif);
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .login-card p {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .error-msg {
+            color: #e74c3c;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .btn-submit {
+            background-color: var(--accent-color);
+            color: white;
+            padding: 16px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            width: 100%;
+            margin-top: 10px;
+        }
+        .btn-submit:hover {
+            background-color: var(--accent-hover);
         }
 
         /* --- PAGE 1: HOME PAGE --- */
@@ -576,55 +666,6 @@
             border-color: var(--accent-color);
         }
 
-        /* --- PAGE 5: DEDICATED ADMIN LOGIN VIEW --- */
-        .login-card {
-            background: var(--card-bg);
-            max-width: 450px;
-            margin: 40px auto 0 auto;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.05);
-            text-align: left;
-        }
-        .login-card h2 {
-            font-family: var(--font-serif);
-            font-size: 2.2rem;
-            margin-bottom: 10px;
-            text-align: center;
-        }
-        .login-card p {
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        .error-msg {
-            color: #e74c3c;
-            font-size: 0.9rem;
-            font-weight: 600;
-            margin-top: 5px;
-            display: none;
-        }
-
-        .btn-submit {
-            background-color: var(--accent-color);
-            color: white;
-            padding: 16px;
-            border: none;
-            border-radius: 6px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            width: 100%;
-            margin-top: 10px;
-        }
-        .btn-submit:hover {
-            background-color: var(--accent-hover);
-            width: 100%;
-        }
-
         /* --- RESPONSIVE DESIGN --- */
         @media (max-width: 992px) {
             .home-container {
@@ -662,7 +703,6 @@
 </head>
 <body id="portfolio-body">
 
-    <!-- TOP SYSTEM STATUS AND CONTROL BAR -->
     <div id="admin-bar">
         <div><strong>Admin Live Mode Active</strong> &mdash; Text boxes are directly editable. Click "Save Dashboard Modifications" to preserve.</div>
         <div class="admin-actions">
@@ -672,19 +712,18 @@
     </div>
 
     <header>
-        <a href="#" class="logo admin-editable" contenteditable="false" id="editable-logo" onblur="syncLogoBrand(this.innerText)">Bharath E</a>
+        <a href="#home" class="logo admin-editable" contenteditable="false" id="editable-logo" onblur="syncLogoBrand(this.innerText)">Bharath E</a>
         <nav id="main-nav">
-            <a onclick="switchPage('home')" class="nav-link active" id="nav-home">Home</a>
-            <a onclick="switchPage('about')" class="nav-link" id="nav-about">About</a>
-            <a onclick="switchPage('work')" class="nav-link" id="nav-work">Work</a>
-            <a onclick="switchPage('contact')" class="nav-link" id="nav-contact">Contact</a>
-            <a onclick="switchPage('admin-login-view')" class="nav-link" id="nav-admin-login-view"><i class="fa-solid fa-lock"></i> Admin</a>
-            <a onclick="switchPage('contact')" class="btn-talk">Let's Talk</a>
+            <a href="#home" class="nav-link active" id="nav-home">Home</a>
+            <a href="#about" class="nav-link" id="nav-about">About</a>
+            <a href="#work" class="nav-link" id="nav-work">Work</a>
+            <a href="#contact" class="nav-link" id="nav-contact">Contact</a>
+            <a onclick="openAdminModal()" class="nav-link" id="nav-admin-login-view"><i class="fa-solid fa-lock"></i> Admin</a>
+            <a href="#contact" class="btn-talk">Let's Talk</a>
         </nav>
     </header>
 
-    <!-- PAGE 1: HOME PAGE -->
-    <main id="home" class="page active-page">
+    <main id="home" class="page">
         <div class="home-container">
             <div class="hero-text">
                 <h2 class="admin-editable" id="editable-hero-i-am">I'm</h2>
@@ -693,7 +732,7 @@
                 <p class="description admin-editable" id="editable-hero-desc">
                     An aspiring engineer blending technical innovation with modern design principles to solve complex problems and build impactful engineering solutions.
                 </p>
-                <button class="btn-work" onclick="switchPage('work')">View My Projects</button>
+                <a href="#work" class="btn-work" style="text-align: center;">View My Projects</a>
                 
                 <div class="social-connect">
                     <span>Follow Me</span>
@@ -744,7 +783,6 @@
         </div>
     </main>
 
-    <!-- PAGE 2: ABOUT PAGE -->
     <main id="about" class="page">
         <div class="about-grid">
             <div class="about-image-wrapper">
@@ -770,7 +808,6 @@
         </div>
     </main>
 
-    <!-- PAGE 3: WORK PAGE -->
     <main id="work" class="page">
         <div class="portfolio-header">
             <h2 class="section-title admin-editable" id="editable-work-heading" style="margin-bottom:0;">Selected Projects</h2>
@@ -778,7 +815,6 @@
         </div>
         
         <div class="portfolio-grid" id="project-cards-container">
-            <!-- Project Card 1 -->
             <div class="portfolio-item">
                 <button class="btn-del-project admin-only-btn" onclick="this.parentElement.remove()"><i class="fa-solid fa-trash"></i></button>
                 <div class="portfolio-img-placeholder">
@@ -796,7 +832,6 @@
                 </div>
             </div>
             
-            <!-- Project Card 2 -->
             <div class="portfolio-item">
                 <button class="btn-del-project admin-only-btn" onclick="this.parentElement.remove()"><i class="fa-solid fa-trash"></i></button>
                 <div class="portfolio-img-placeholder">
@@ -815,7 +850,6 @@
         </div>
     </main>
 
-    <!-- PAGE 4: CONTACT PAGE -->
     <main id="contact" class="page">
         <div class="contact-wrapper">
             <h2 class="section-title admin-editable" id="editable-contact-heading">Let's Connect</h2>
@@ -844,9 +878,9 @@
         </div>
     </main>
 
-    <!-- PAGE 5: DEDICATED ADMIN LOGIN VIEW -->
-    <main id="admin-login-view" class="page">
+    <div id="admin-login-modal">
         <div class="login-card">
+            <button class="modal-close-trigger" onclick="closeAdminModal()"><i class="fa-solid fa-xmark"></i></button>
             <h2>Portal Authentication</h2>
             <p>Enter administrative user credentials to authorize real-time layout changes.</p>
             
@@ -863,7 +897,7 @@
                 <button type="button" class="btn-submit" onclick="validateAdminForm()">Authenticate Dashboard</button>
             </div>
         </div>
-    </main>
+    </div>
 
     <script>
         // --- INITIALIZE SUPABASE CLIENT CONNECTION ---
@@ -871,21 +905,39 @@
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRkamd3a2JiaHhreXdwbHd5dm5nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyMjc5OTgsImV4cCI6MjA5NjgwMzk5OH0.hDArnJpLzAdFYjSuGtUuKgk5QwlkseZPuDVyAhTCca8";
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // --- MULTI-PAGE ENGINE ---
-        function switchPage(pageId) {
-            const pages = document.querySelectorAll('.page');
-            pages.forEach(page => page.classList.remove('active-page'));
+        // --- SCROLL ACTION ACTIVE LINKS INTERSECTION OBSERVER ---
+        // Dynamically applies the '.active' styling to nav anchors depending on viewport coordinate placement
+        const sections = document.querySelectorAll('.page');
+        const navLinks = document.querySelectorAll('.nav-link');
 
-            const links = document.querySelectorAll('.nav-link');
-            links.forEach(link => link.classList.remove('active'));
+        window.addEventListener('scroll', () => {
+            let currentSectionId = 'home';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                // Offset calculation ensures highlight transitions activate halfway down the screen
+                if (window.scrollY >= (sectionTop - 250)) {
+                    currentSectionId = section.getAttribute('id');
+                }
+            });
 
-            const targetPage = document.getElementById(pageId);
-            if (targetPage) targetPage.classList.add('active-page');
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${currentSectionId}`) {
+                    link.classList.add('active');
+                }
+            });
+        });
 
-            const activeNav = document.getElementById(`nav-${pageId}`);
-            if (activeNav) activeNav.classList.add('active');
+        // --- MODAL SCREEN INTERACTIVE LAYERS ---
+        function openAdminModal() {
+            document.getElementById('admin-login-modal').style.display = 'flex';
+            document.body.style.overflow = 'hidden'; // Prevents background document page shifting while modal is open
+        }
 
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+        function closeAdminModal() {
+            document.getElementById('admin-login-modal').style.display = 'none';
+            document.body.style.overflow = 'auto'; // Restores layout structural scrollability
         }
 
         function syncLogoBrand(val) {
@@ -905,7 +957,7 @@
                 document.getElementById('admin-password').value = "";
                 
                 enableAdminMode();
-                switchPage('home'); 
+                closeAdminModal(); 
             } else {
                 errorBanner.style.display = "block";
             }
